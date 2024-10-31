@@ -17,7 +17,7 @@ public class Account {
         this.password = password;
     }
 
-/*    public String getAccountID() {
+    /*  public String getAccountID() {
         return account_ID;
     }*/
 
@@ -64,7 +64,7 @@ public class Account {
     @Override
     public String toString() {
         return "Account{" +
-                ", name='" + name + '\'' +
+                " name='" + name + '\'' +
                 ", IBAN='" + IBAN + '\'' +
                 ", amount=" + amount +
                 '}';

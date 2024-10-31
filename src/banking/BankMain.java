@@ -12,7 +12,7 @@ public class BankMain {
     private static final int TRANSFER_MONEY = 4;
     private static final int LOGOUT_PROGRAM = 5;
     private static Map<String, Account> accounts = new HashMap<>();
-    private static Map<String, Account> ibanAccounts = new HashMap<>();
+    private static Map<String, Account> ibanAccounts = new HashMap<>(); //needed for transferMoney() method to lookup the receiver's IBAN
 
 
     public static void main(String[] args) {
@@ -20,21 +20,9 @@ public class BankMain {
         int menuChoice;
         BankService bankService = new BankService();
 
-        //create some test accounts
-        Account account1 = new Account("HU11773425-02904405", "Kiss János", 500000, "user1", "pwd123");
-        Account account2 = new Account("HU11773675-12345678", "Nagy Anett", 100000, "user2", "password0");
-        accounts.put(account1.getUsername(), account1);
-        ibanAccounts.put(account1.getIBAN(), account1);
-        accounts.put(account2.getUsername(), account2);
-        ibanAccounts.put(account2.getIBAN(), account2);
+        //create some test accounts and print to console
+        initializeTestAccounts();
 
-
-
-        //print the test accounts
-        System.out.println("Details for the accounts: ");
-        for(Map.Entry<String, Account> entry : accounts.entrySet()) {
-            System.out.println(entry.getValue());
-        }
 
         // Outer loop to restart the login process upon logout
         while(true) {
@@ -64,16 +52,11 @@ public class BankMain {
             //main menu loop
             boolean isRunning = true;
             while (isRunning) {
+                //show the user menu
                 showMenu();
 
-                // Check for valid input to avoid InputMismatchException
-                if (!scanner.hasNextInt()) {
-                    System.out.println("Invalid input. Please enter a number between 0 and 4.");
-                    scanner.next(); // Clear invalid input
-                    continue;
-                }
-                menuChoice = scanner.nextInt();
-                scanner.nextLine();
+                //ask user input for menu
+                menuChoice = getMenuChoice(scanner);
 
                 switch (menuChoice) {
                     case QUIT_PROGRAM:
@@ -131,6 +114,22 @@ public class BankMain {
         }
     }
 
+
+    private static void initializeTestAccounts() {
+        Account account1 = new Account("HU11773425-02904405", "Kiss János", 500000, "user1", "pwd123");
+        Account account2 = new Account("HU11773675-12345678", "Nagy Anett", 100000, "user2", "password0");
+        accounts.put(account1.getUsername(), account1);
+        ibanAccounts.put(account1.getIBAN(), account1);
+        accounts.put(account2.getUsername(), account2);
+        ibanAccounts.put(account2.getIBAN(), account2);
+
+        //print the test accounts
+        System.out.println("Details for the accounts: ");
+        for(Map.Entry<String, Account> entry : accounts.entrySet()) {
+            System.out.println(entry.getValue());
+        }
+    }
+
     private static void showMenu() {
         System.out.println("\n===============================");
         System.out.println("         MAIN MENU             ");
@@ -145,6 +144,25 @@ public class BankMain {
         System.out.println("Enter your choice: ");
     }
 
+    private static int getMenuChoice(Scanner scanner) {
+        while (true) {
+            //Check for valid input to avoid InputMismatchException
+            if (!scanner.hasNextInt()) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next(); // Clear invalid input
+                continue;
+            }
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline
+            if (choice >= 0 && choice <= 5) {
+                return choice;
+            } else {
+                System.out.println("Please choose a number between 0 and 5.");
+            }
+        }
+    }
+
+    //just a very simple login method
     private static Account login(String username, String password) {
         if (accounts.containsKey(username) && accounts.get(username).getPassword().equals(password))
             return accounts.get(username);
